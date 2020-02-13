@@ -1,24 +1,17 @@
-# README
+# Instructions
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Create an API that allows a service consumer to:
+* Create an account
+* Fund an account
+* Transfer funds between two accounts
+* (Optional bonus) Add ability to indicate source and target currency on the transfer request. Perform currency conversion during transfer utilizing the Mastercard Currency Conversion calculator sandbox service
 
-Things you may want to cover:
+Use any language/framework you feel most productive in. Showcase your implementation any way you deem suitable for a live demo. Incorporate tests where you feel necessary.
 
-* Ruby version
+# Bonus question links
+[Currency Conversion Calculator Service](https://developer.mastercard.com/documentation/currency-conversion-calculator/1)
+[Developer Portal Project Dashboard](https://developer.mastercard.com/dashboard)
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Bonus question without SDK
+[Currency Conversion Calculator swagger spec](currency-conversion-swagger.yaml)
+[OAuth guide for non-SDK clients](<https://developer.mastercard.com/platform/documentation/using-oauth-1a-to-access-mastercard-apis/>)
