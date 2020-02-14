@@ -1,26 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useRoutes } from "hookrouter";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { routes } from "./Routes";
+import NotFound from "./components/pages/NotFound";
+import AuthContextWrapper from "./context/Auth";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+export default function App() {
+  const route = useRoutes(routes);
+
+  return route ? (
+    <React.Fragment>
+      <CssBaseline />
+      <AuthContextWrapper>{route}</AuthContextWrapper>
+    </React.Fragment>
+    ) : (
+    <React.Fragment>
+      <CssBaseline />
+      <NotFound />
+    </React.Fragment>
   );
 }
-
-export default App;
