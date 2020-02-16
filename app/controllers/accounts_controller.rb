@@ -21,6 +21,6 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.permit(:first_name, :last_name, :email, :password)
+    params.permit(:first_name, :last_name, :email, :password, :currency, :balance)
   end
 end

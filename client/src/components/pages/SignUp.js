@@ -64,9 +64,9 @@ export default function SignUp() {
   const [password, setPassword] = useState('')
   const [token, setToken] = useState('')
 
-  const [first_name, setFirstName] = useState(null)
-  const [last_name, setLastName] = useState(null)
-  const [currency, setCurrency] = useState(null)
+  const [first_name, setFirstName] = useState('')
+  const [last_name, setLastName] = useState('')
+  const [currency, setCurrency] = useState('')
 
   const [status, setStatus] = useState({
     color: "black",
@@ -86,7 +86,7 @@ export default function SignUp() {
     }
   }, [context.token, context.error]);
 
-  function login(e) {
+  function signup(e) {
     e.preventDefault();
 
     setStatus({
@@ -94,7 +94,7 @@ export default function SignUp() {
       status: "Validating"
     });
 
-    context.login(email, password);
+    context.signup(email, password, first_name, last_name, currency);
   }
 
   return (
@@ -109,7 +109,7 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Register Today!
           </Typography>
-          <form className={classes.form} onSubmit={login} noValidate>
+          <form className={classes.form} onSubmit={signup} noValidate>
             <TextField
               variant="outlined"
               margin="normal"

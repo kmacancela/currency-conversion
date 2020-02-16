@@ -21,11 +21,11 @@ const AuthContextWrapper = props => {
       })
       .then(r => r.json())
       .then(res => {
-        console.log("res?: ", res)
         if(res.token !== undefined) {
-          console.log('user found...')
           setCookie("token", res.token);
           setError("");
+          localStorage.setItem('account', JSON.stringify(res.account))
+          localStorage.setItem('token', res.token)
         } else {
           setError("Wrong credentials");
         }
@@ -38,8 +38,44 @@ const AuthContextWrapper = props => {
     setLoading(true);
     setTimeout(() => {
       removeCookie("token")
+      localStorage.removeItem('account')
+      localStorage.removeItem('token')
       navigate("/")
       setLoading(false);
+    }, 1000)
+  }
+
+  const signup = (email, password, first_name, last_name, currency) => {
+    let balance = 0
+    setLoading(true);
+    setTimeout(() => {
+      fetch("http://localhost:3000/accounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ email, password, first_name, last_name, currency, balance })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if(res.email === email){
+          login(email, password)
+        } else {
+          setError("Wrong credentials");
+        }
+      })
+      setLoading(false);
+    }, 1000)
+  }
+
+  const transfers = () => {
+    setTimeout(() => {
+      fetch("http://localhost:3000/transfers")
+      .then(r => r.json())
+      .then(res => {
+        console.log('res of transfers', res)
+      })
     }, 1000)
   }
 
@@ -50,7 +86,9 @@ const AuthContextWrapper = props => {
         error,
         loading,
         login,
-        logout
+        logout,
+        signup,
+        transfers
       }}
     >
       {props.children}
