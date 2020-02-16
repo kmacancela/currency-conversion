@@ -22,7 +22,6 @@ import { mainListItems, secondaryListItems } from '../listItems';
 import Chart from '../Chart';
 import Balance from '../Balance';
 import Transfers from '../Transfers';
-
 import AuthContext from "../../context/Auth/auth";
 
 function Copyright() {
@@ -127,9 +126,14 @@ export default function Home() {
     setTimeout(() => {
       let currentAccount = JSON.parse(localStorage.getItem('account'))
       setAccount(currentAccount)
-
-      context.transfers()
     }, 100)
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log('here', context.transfers)
+      setTransfers(context.transfers)
+    }, 1000)
   }, []);
 
   const handleDrawerOpen = () => {
@@ -161,6 +165,8 @@ export default function Home() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
 
               {account ? account.first_name : null}
+
+              <button onClick={() => {console.log(transfers)}}>Test</button>
 
           </Typography>
           <button onClick={logout}>Log out</button>
@@ -202,7 +208,7 @@ export default function Home() {
             {/* Recent Transfers */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Transfers />
+                <Transfers transfers={transfers} />
               </Paper>
             </Grid>
           </Grid>

@@ -7,6 +7,8 @@ const AuthContextWrapper = props => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  //doing something
+  const [transfers, setTransfers] = useState(null)
 
   const login = (email, password) => {
     setLoading(true);
@@ -26,6 +28,7 @@ const AuthContextWrapper = props => {
           setError("");
           localStorage.setItem('account', JSON.stringify(res.account))
           localStorage.setItem('token', res.token)
+          fetchTransfers(res.account);
         } else {
           setError("Wrong credentials");
         }
@@ -69,14 +72,22 @@ const AuthContextWrapper = props => {
     }, 1000)
   }
 
-  const transfers = () => {
-    setTimeout(() => {
+  const fetchTransfers = () => {
+    // setTimeout(() => {
       fetch("http://localhost:3000/transfers")
       .then(r => r.json())
       .then(res => {
+        // console.log('account', localStorage.getItem('account').id)
         console.log('res of transfers', res)
+        let accountTransfers = res.filter(transfer => {
+          // console.log('account', JSON.parse(localStorage.getItem('account')))
+          // console.log('insider condition', transfer, transfer.sender === JSON.parse(localStorage.getItem('account')).id)
+          return transfer.sender === JSON.parse(localStorage.getItem('account')).id
+        })
+        console.log('res of transfers of this account', accountTransfers)
+        setTransfers(accountTransfers);
       })
-    }, 1000)
+    // }, 1000)
   }
 
   return (
