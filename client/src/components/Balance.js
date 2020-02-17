@@ -4,10 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 
-function preventDefault(event) {
-  event.preventDefault();
-}
-
 const useStyles = makeStyles({
   depositContext: {
     flex: 1,
@@ -28,8 +24,8 @@ export default function Balance(props) {
         on {props.account ? props.account.updated_at : null}
       </Typography>
       <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          Add funds
+        <Link color="primary" href="#" onClick={() => {props.setFundView(true)}}>
+          Add/Send funds
         </Link>
       </div>
     </React.Fragment>

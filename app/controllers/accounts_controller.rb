@@ -18,9 +18,19 @@ class AccountsController < ApplicationController
     end
   end
 
+  def update
+    account = Account.find_by(id: params[:id])
+    account.update(account_params)
+    if account.valid?
+      render json: account
+    else
+      render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def account_params
-    params.permit(:first_name, :last_name, :email, :password, :currency, :balance)
+    params.permit(:first_name, :last_name, :email, :password, :currency, :balance, :updated_at)
   end
 end

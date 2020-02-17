@@ -21,6 +21,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from '../listItems';
 import Chart from '../Chart';
 import Balance from '../Balance';
+import Fund from '../Fund';
 import Transfers from '../Transfers';
 import AuthContext from "../../context/Auth/auth";
 
@@ -111,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240,
+    height: 340,
   },
 }));
 
@@ -121,6 +122,7 @@ export default function Home() {
   const [open, setOpen] = useState(true);
   const [account, setAccount] = useState(null)
   const [transfers, setTransfers] = useState(null)
+  const [fundView, setFundView] = useState(false)
 
   useEffect(() => {
     setTimeout(() => {
@@ -132,18 +134,19 @@ export default function Home() {
   useEffect(() => {
     setTimeout(() => {
       let accountId = JSON.parse(localStorage.getItem('account')).id
-      console.log('accountId', accountId)
       fetch(`http://localhost:3000/accounts/${accountId}`)
         .then(r => r.json())
         .then(res => {
-          console.log('inside fetchTransfers', res.outgoing_transfers);
           setTransfers(res.outgoing_transfers)
         })
     }, 200)
-    // setTimeout(() => {console.log('inside fetchTransfers after set function', transfers)}, 5000)
   }, []);
 
-  setTimeout(() => {console.log('inside fetchTransfers after set function', transfers)}, 500)
+  useEffect(() => {
+    if(account){
+      console.log('account', account.balance)
+    }
+  }, [account])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -172,7 +175,6 @@ export default function Home() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-
               {account ? account.first_name : null}
 
               <button onClick={() => {console.log(transfers)}}>Test</button>
@@ -203,16 +205,17 @@ export default function Home() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Balance */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Balance account={account} />
-              </Paper>
+            <Grid item xs={12}>
+              {
+                fundView ?
+                  <Paper className={fixedHeightPaper}>
+                    <Fund account={account} setAccount={setAccount} setFundView={setFundView} />
+                  </Paper>
+                  :
+                  <Paper className={fixedHeightPaper}>
+                    <Balance account={account} setFundView={setFundView}/>
+                  </Paper>
+              }
             </Grid>
             {/* Recent Transfers */}
             <Grid item xs={12}>
