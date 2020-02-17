@@ -24,11 +24,14 @@ const AuthContextWrapper = props => {
       .then(r => r.json())
       .then(res => {
         if(res.token !== undefined) {
+          // console.log('res?', res.account);
           setCookie("token", res.token);
           setError("");
           localStorage.setItem('account', JSON.stringify(res.account))
           localStorage.setItem('token', res.token)
-          fetchTransfers(res.account);
+          // fetchTransfers();
+          // console.log('did this work?', account.outgoing_transfers)
+          // setTransfers(account.outgoing_transfers)
         } else {
           setError("Wrong credentials");
         }
@@ -72,23 +75,34 @@ const AuthContextWrapper = props => {
     }, 1000)
   }
 
-  const fetchTransfers = () => {
-    // setTimeout(() => {
-      fetch("http://localhost:3000/transfers")
-      .then(r => r.json())
-      .then(res => {
-        // console.log('account', localStorage.getItem('account').id)
-        console.log('res of transfers', res)
-        let accountTransfers = res.filter(transfer => {
-          // console.log('account', JSON.parse(localStorage.getItem('account')))
-          // console.log('insider condition', transfer, transfer.sender === JSON.parse(localStorage.getItem('account')).id)
-          return transfer.sender === JSON.parse(localStorage.getItem('account')).id
-        })
-        console.log('res of transfers of this account', accountTransfers)
-        setTransfers(accountTransfers);
-      })
-    // }, 1000)
-  }
+  // const fetchTransfers = () => {
+  //   // setTimeout(() => {
+  //     fetch("http://localhost:3000/transfers")
+  //     .then(r => r.json())
+  //     .then(res => {
+  //       // console.log('account', localStorage.getItem('account').id)
+  //       console.log('res of transfers', res)
+  //       let accountTransfers = res.filter(transfer => {
+  //         // console.log('account', JSON.parse(localStorage.getItem('account')))
+  //         // console.log('insider condition', transfer, transfer.sender === JSON.parse(localStorage.getItem('account')).id)
+  //         return transfer.sender === JSON.parse(localStorage.getItem('account')).id
+  //       })
+  //       console.log('res of transfers of this account', accountTransfers)
+  //       setTransfers(accountTransfers);
+  //     })
+  //   // }, 1000)
+  // }
+
+  // const fetchTransfers = () => {
+  //   let accountId = JSON.parse(localStorage.getItem('account')).id
+  //   fetch(`http://localhost:3000/accounts/${accountId}`)
+  //     .then(r => r.json())
+  //     .then(res => {
+  //       console.log('inside fetchTransfers', res.outgoing_transfers);
+  //       setTransfers(res.outgoing_transfers)
+  //     })
+  //     .then(console.log('inside fetchTransfers after set function', transfers))
+  // }
 
   return (
     <Context.Provider

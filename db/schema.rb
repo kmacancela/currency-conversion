@@ -27,11 +27,15 @@ ActiveRecord::Schema.define(version: 2020_02_13_205637) do
   end
 
   create_table "transfers", force: :cascade do |t|
-    t.integer "sender"
-    t.integer "receiver"
+    t.bigint "sender_id"
+    t.bigint "receiver_id"
     t.decimal "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["receiver_id"], name: "index_transfers_on_receiver_id"
+    t.index ["sender_id"], name: "index_transfers_on_sender_id"
   end
 
+  add_foreign_key "transfers", "accounts", column: "receiver_id"
+  add_foreign_key "transfers", "accounts", column: "sender_id"
 end

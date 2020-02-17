@@ -131,10 +131,19 @@ export default function Home() {
 
   useEffect(() => {
     setTimeout(() => {
-      console.log('here', context.transfers)
-      setTransfers(context.transfers)
-    }, 1000)
+      let accountId = JSON.parse(localStorage.getItem('account')).id
+      console.log('accountId', accountId)
+      fetch(`http://localhost:3000/accounts/${accountId}`)
+        .then(r => r.json())
+        .then(res => {
+          console.log('inside fetchTransfers', res.outgoing_transfers);
+          setTransfers(res.outgoing_transfers)
+        })
+    }, 200)
+    // setTimeout(() => {console.log('inside fetchTransfers after set function', transfers)}, 5000)
   }, []);
+
+  setTimeout(() => {console.log('inside fetchTransfers after set function', transfers)}, 500)
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -208,7 +217,7 @@ export default function Home() {
             {/* Recent Transfers */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Transfers transfers={transfers} />
+                <Transfers outgoing_transfers={transfers} />
               </Paper>
             </Grid>
           </Grid>

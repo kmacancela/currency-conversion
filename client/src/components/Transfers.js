@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -35,19 +35,38 @@ const useStyles = makeStyles(theme => ({
 export default function Transfers(props) {
   const classes = useStyles();
   const context = useContext(AuthContext);
-  let rows = [];
+  const [outgoing, setOutgoing] = useState(null)
+  let rows = []
+
+  // useEffect(() => {
+    setTimeout(() => {
+      console.log('inside use effect in transfers*******', props.outgoing_transfers)
+      if(props.outgoing_transfers !== null){
+        rows = props.outgoing_transfers.map(transfer => {
+          return createData(transfer.id, '10-10-10', transfer.receiver.email, transfer.amount)
+        })
+      }
+      console.log('rows', rows)
+    }, 2000)
+  // }, [])
+
   // setTimeout(() => {
-    console.log('works?', props.transfers)
-    if(props.transfers === null) {
-      rows = [[createData(0, '15 Mar, 2019', 'Elvis Presley', 312.44),
-              createData(1, '15 Mar, 2019', 'Paul McCartney', 866.99)]]
-    } else {
-      rows = props.transfers.map(transfer => {
-        console.log('transfer', transfer)
-        return createData(transfer.id, '16 Mar, 2019', transfer.receiver, transfer.amount)
-      })
-    }
-    console.log('new rows array', rows)
+  //   console.log('props in transfers', outgoing)
+  //   if(outgoing !== null) {
+  //     let rows = outgoing
+  //   }
+  // },1000)
+
+  // let rows = [];
+  // setTimeout(() => {
+    // console.log('works?', props.account, props.account.outgoing_transfers)
+    // if(props.account === null) {
+    //   rows = [[createData(0, '15 Mar, 2019', 'Elvis Presley', 312.44),
+    //           createData(1, '15 Mar, 2019', 'Paul McCartney', 866.99)]]
+    // } else {
+    //   rows = props.account.outgoing_transfers
+    // }
+    // console.log('new rows array', rows)
   // }, 1500)
 
   return (
@@ -62,13 +81,13 @@ export default function Transfers(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
-            </TableRow>
-          ))}
+          {rows ?
+            rows.map(row => (
+              <span>Hi</span>
+            ))
+            :
+            <span>Bye</span>
+          }
         </TableBody>
       </Table>
     </React.Fragment>

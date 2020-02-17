@@ -1,4 +1,6 @@
 class Account < ApplicationRecord
+  has_many :incoming_transfers, class_name: "Transfer", foreign_key: "receiver_id"
+  has_many :outgoing_transfers, class_name: "Transfer", foreign_key: "sender_id" 
   has_secure_password
 
   validates_presence_of :email
