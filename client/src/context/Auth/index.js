@@ -7,7 +7,6 @@ const AuthContextWrapper = props => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [transfers, setTransfers] = useState(null)
 
   const login = (email, password) => {
     setLoading(true);
@@ -79,8 +78,7 @@ const AuthContextWrapper = props => {
         loading,
         login,
         logout,
-        signup,
-        transfers
+        signup
       }}
     >
       {props.children}

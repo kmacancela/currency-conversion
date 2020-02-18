@@ -50,7 +50,7 @@ export default function Fund(props) {
       setComplete(true);
       setTimeout(() => {
         props.setFundView(false);
-      }, 1000)
+      }, 2000)
     })
   }
 
@@ -69,7 +69,6 @@ export default function Fund(props) {
       localStorage.setItem('account', JSON.stringify(res));
       console.log('res', res)
       props.setAccount(res);
-      // setComplete(true);
     })
   }
 
@@ -106,7 +105,7 @@ export default function Fund(props) {
     }
     setTimeout(() => {
       props.setFundView(false);
-    }, 1000)
+    }, 2000)
   }
 
   const handleSubmit = (e) => {
@@ -118,24 +117,10 @@ export default function Fund(props) {
     }
   }
 
-  const makeTest = () => {
-    fetch("http://localhost:3000/transfers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({ sender_id: 1, receiver_id: 2, amount: 110 })
-    })
-    .then(r => r.json())
-    .then(res => {
-      console.log('res', res)
-    })
-  }
-
   return (
+
     <React.Fragment>
-      <Title>Add/Send Funds</Title>
+      <Title>Add or Send Funds</Title>
       <Typography component="p" variant="h4">
         {
           complete ?
@@ -173,7 +158,7 @@ export default function Fund(props) {
           </>
           :
           <span>
-            Adding funds to yourself.<br/>
+            <b>Adding funds to yourself.</b><br />
             <Link color="primary" href="#" onClick={() => {setSend(true)}}>
               Send to someone else instead?
             </Link>

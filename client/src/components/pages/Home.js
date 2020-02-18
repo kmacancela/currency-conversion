@@ -103,8 +103,11 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     flexDirection: 'column',
   },
-  fixedHeight: {
-    height: 350,
+  balanceHeight: {
+    height: 150,
+  },
+  fundHeight: {
+    height: 300,
   },
 }));
 
@@ -126,7 +129,6 @@ export default function Home() {
 
   useEffect(() => {
     if(account){
-      console.log('account', account.balance)
       let accountId = account.id
       fetch(`http://localhost:3000/accounts/${accountId}`)
         .then(r => r.json())
@@ -137,7 +139,8 @@ export default function Home() {
     }
   }, [account])
 
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const fundHeightPaper = clsx(classes.paper, classes.fundHeight);
+  const balanceHeightPaper = clsx(classes.paper, classes.balanceHeight);
 
   const logout = () => {
     context.logout()
@@ -151,7 +154,9 @@ export default function Home() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               {account ? <>Welcome, {account.first_name}!</> : null}
           </Typography>
-          <button onClick={logout}>Log out</button>
+          <Typography component="h1" variant="h6" color="inherit" noWrap style={{cursor: 'pointer'}} onClick={logout}>
+              Log out
+          </Typography>
         </Toolbar>
       </AppBar>
       <main className={classes.content}>
@@ -159,14 +164,16 @@ export default function Home() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <Paper className={fixedHeightPaper}>
               {
                 fundView ?
-                  <Fund account={account} setAccount={setAccount} setFundView={setFundView} />
+                  <Paper className={fundHeightPaper}>
+                    <Fund account={account} setAccount={setAccount} setFundView={setFundView} />
+                  </Paper>
                   :
-                  <Balance account={account} setFundView={setFundView}/>
+                  <Paper className={balanceHeightPaper}>
+                    <Balance account={account} setFundView={setFundView}/>
+                  </Paper>
               }
-              </Paper>
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.paper}>

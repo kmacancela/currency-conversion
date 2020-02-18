@@ -20,7 +20,7 @@ export default function OutgoingTransfers(props) {
         return transfer.receiver.id !== props.account.id
       })
       rows = outgoingWithoutMine.map(transfer => {
-        return createData(transfer.id, '10-11-10', transfer.receiver.email, transfer.amount)
+        return createData(transfer.id, '10-11-10', transfer.receiver.email, parseFloat(transfer.amount).toFixed(2))
       })
 
 
@@ -45,7 +45,7 @@ export default function OutgoingTransfers(props) {
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
               <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+              <TableCell align="right">${row.amount}</TableCell>
             </TableRow>
           ))
           :

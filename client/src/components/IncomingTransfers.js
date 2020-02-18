@@ -20,7 +20,7 @@ export default function IncomingTransfers(props) {
         if(transfer.sender.email === props.account.email) {
           return createData(transfer.id, '10-10-10', 'Myself', transfer.amount)
         } else {
-          return createData(transfer.id, '10-10-10', transfer.sender.email, transfer.amount)
+          return createData(transfer.id, '10-10-10', transfer.sender.email, parseFloat(transfer.amount).toFixed(2))
         }
       })
       setOutgoing(rows)
@@ -44,7 +44,7 @@ export default function IncomingTransfers(props) {
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
               <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+              <TableCell align="right">${row.amount}</TableCell>
             </TableRow>
           ))
           :
