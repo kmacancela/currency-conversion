@@ -12,13 +12,16 @@ function createData(id, date, name, amount) {
 
 export default function IncomingTransfers(props) {
   const [outgoing, setOutgoing] = useState(null)
-  // need to add incoming
   let rows = []
 
   setTimeout(() => {
     if(props.transfers !== null){
       rows = props.transfers.map(transfer => {
-        return createData(transfer.id, '10-10-10', transfer.receiver.email, transfer.amount)
+        if(transfer.sender.email === props.account.email) {
+          return createData(transfer.id, '10-10-10', 'Myself', transfer.amount)
+        } else {
+          return createData(transfer.id, '10-10-10', transfer.sender.email, transfer.amount)
+        }
       })
       setOutgoing(rows)
     }

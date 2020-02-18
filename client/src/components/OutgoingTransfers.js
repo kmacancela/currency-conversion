@@ -16,9 +16,14 @@ export default function OutgoingTransfers(props) {
 
   setTimeout(() => {
     if(props.transfers !== null){
-      rows = props.transfers.map(transfer => {
-        return createData(transfer.id, '10-10-10', transfer.receiver.email, transfer.amount)
+      let outgoingWithoutMine = props.transfers.filter(transfer => {
+        return transfer.receiver.id !== props.account.id
       })
+      rows = outgoingWithoutMine.map(transfer => {
+        return createData(transfer.id, '10-11-10', transfer.receiver.email, transfer.amount)
+      })
+
+
       setOutgoing(rows)
     }
   }, 1000)
@@ -30,7 +35,7 @@ export default function OutgoingTransfers(props) {
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
-            <TableCell>From</TableCell>
+            <TableCell>To</TableCell>
             <TableCell align="right">Amount</TableCell>
           </TableRow>
         </TableHead>

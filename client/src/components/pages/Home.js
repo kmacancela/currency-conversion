@@ -170,12 +170,12 @@ export default function Home() {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.paper}>
-                <OutgoingTransfers transfers={outgoing} />
+                <OutgoingTransfers transfers={outgoing} account={account} />
               </Paper>
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.paper}>
-                <IncomingTransfers transfers={incoming} />
+                <IncomingTransfers transfers={incoming} account={account} />
               </Paper>
             </Grid>
           </Grid>
