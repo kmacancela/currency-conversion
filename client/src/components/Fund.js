@@ -20,10 +20,42 @@ export default function Fund(props) {
   const [email, setEmail] = useState('');
   const [send, setSend] = useState(false)
   const [complete, setComplete] = useState(false)
+  const [error, setError] = useState(false)
 
-  const addFunds = () => {
-    let newBalance = parseFloat(props.account.balance) + parseFloat(amount)
+  const addFunds = (account) => {
+    let newBalance = parseFloat(account.balance) + parseFloat(amount)
     console.log('newBalance', newBalance)
+    fetch(`http://localhost:3000/accounts/${account.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ balance: newBalance })
+    })
+    .then(r => r.json())
+    .then(res => {
+      localStorage.setItem('account', JSON.stringify(res));
+      if(props.account === account){
+          props.setAccount(res);
+          fetch("http://localhost:3000/transfers", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ sender_id: account.id, receiver_id: account.id, amount: parseFloat(amount) })
+          })
+      }
+      setComplete(true);
+      setTimeout(() => {
+        props.setFundView(false);
+      }, 1000)
+    })
+  }
+
+  const removeFunds = () => {
+    let newBalance = parseFloat(props.account.balance) - parseFloat(amount)
     fetch(`http://localhost:3000/accounts/${props.account.id}`, {
       method: "PATCH",
       headers: {
@@ -34,56 +66,47 @@ export default function Fund(props) {
     })
     .then(r => r.json())
     .then(res => {
-      console.log('inside addFunds 2', res);
       localStorage.setItem('account', JSON.stringify(res));
+      console.log('res', res)
       props.setAccount(res);
-      setComplete(true);
-      setTimeout(() => {
-        props.setFundView(false);
-      }, 1000)
+      // setComplete(true);
     })
   }
 
   const sendFunds = async () => {
-    console.log('inside sendFunds')
     let receiver = null;
-    console.log('amount', amount)
     let sendAmount = parseFloat(amount).toFixed(2)
-    console.log('sendAmount', sendAmount)
-    await fetch("http://localhost:3000/accounts")
-    .then(r => r.json())
-    .then(res => {
-      // console.log('finding account', res)
-      receiver = res.filter(account => {
-        return account.email === email
-      })[0]
-      console.log('receiver 1', receiver)
-    })
-    // console.log('account', props.account, props.account.id)
-    console.log('receiver 2', receiver)
-    let updatedReceiver = {
-      id: receiver.id,
-      first_name: receiver.first_name,
-      last_name: receiver.last_name,
-      email: receiver.email,
-      password_digest: receiver.password_digest,
-      balance: receiver.balance,
-      currency: receiver.currency
+    console.log('inside send funds', sendAmount, props.account.balance, sendAmount < props.account.balance)
+    if(sendAmount < props.account.balance) {
+      setError(false);
+      await fetch("http://localhost:3000/accounts")
+      .then(r => r.json())
+      .then(res => {
+        receiver = res.filter(account => {
+          return account.email === email
+        })[0]
+        addFunds(receiver);
+      })
+      fetch("http://localhost:3000/transfers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ sender_id: props.account.id, receiver_id: receiver.id, amount: sendAmount })
+      })
+      .then(r => r.json())
+      .then(res => {
+        removeFunds();
+        console.log('res sender', res.sender)
+        setComplete(true);
+      })
+    } else {
+      setError(true);
     }
-    console.log('new receiver', updatedReceiver)
-
-    fetch("http://localhost:3000/transfers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({ sender: receiver, receiver, amount: sendAmount })
-    })
-    .then(r => r.json())
-    .then(res => {
-      console.log('res', res)
-    })
+    setTimeout(() => {
+      props.setFundView(false);
+    }, 1000)
   }
 
   const handleSubmit = (e) => {
@@ -91,8 +114,23 @@ export default function Fund(props) {
     if(send) {
       sendFunds();
     } else {
-      addFunds();
+      addFunds(props.account);
     }
+  }
+
+  const makeTest = () => {
+    fetch("http://localhost:3000/transfers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ sender_id: 1, receiver_id: 2, amount: 110 })
+    })
+    .then(r => r.json())
+    .then(res => {
+      console.log('res', res)
+    })
   }
 
   return (
@@ -103,30 +141,35 @@ export default function Fund(props) {
           complete ?
             <>Successfully completed!</>
           :
-            <>0</>
+            null
+        }
+        {
+          error ?
+            <>Not enough funds!</>
+          :
+            null
         }
       </Typography>
-      <hr />
       <form className={classes.form} onSubmit={handleSubmit} noValidate>
         {
           send ?
           <>
+          <Link color="primary" href="#" onClick={() => {setSend(false)}}>
+            Switch to adding fund to yourself.
+          </Link>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Enter Email Address"
+            label="Email Address"
             name="email"
             autoComplete="email"
             autoFocus
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
-          <Link color="primary" href="#" onClick={() => {setSend(false)}}>
-            Switch to adding fund to yourself.
-          </Link>
           </>
           :
           <span>
@@ -142,10 +185,11 @@ export default function Fund(props) {
           required
           fullWidth
           name="amount"
-          label="Enter Amount"
+          label="Amount"
           type="number"
           id="amount"
           autoComplete="amount"
+          autoFocus
           value={amount}
           onChange={e => setAmount(e.target.value)}
         />

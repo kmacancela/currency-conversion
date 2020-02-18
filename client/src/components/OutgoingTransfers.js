@@ -10,14 +10,13 @@ function createData(id, date, name, amount) {
   return { id, date, name, amount };
 }
 
-export default function Transfers(props) {
+export default function OutgoingTransfers(props) {
   const [outgoing, setOutgoing] = useState(null)
-  // need to add incoming
   let rows = []
 
   setTimeout(() => {
-    if(props.outgoing_transfers !== null){
-      rows = props.outgoing_transfers.map(transfer => {
+    if(props.transfers !== null){
+      rows = props.transfers.map(transfer => {
         return createData(transfer.id, '10-10-10', transfer.receiver.email, transfer.amount)
       })
       setOutgoing(rows)
@@ -26,7 +25,7 @@ export default function Transfers(props) {
 
   return (
     <React.Fragment>
-      <Title>Transfers</Title>
+      <Title>Outgoing Transfers</Title>
       <Table size="small">
         <TableHead>
           <TableRow>

@@ -21,6 +21,6 @@ class TransfersController < ApplicationController
   private
 
   def transfer_params
-    params.permit(:sender, :receiver, :amount)
+    params.permit(:sender_id, :receiver_id, :amount)
   end
 end

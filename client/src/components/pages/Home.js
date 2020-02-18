@@ -2,27 +2,19 @@ import React, {useState, useContext, useEffect} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from '../listItems';
-import Chart from '../Chart';
 import Balance from '../Balance';
 import Fund from '../Fund';
-import Transfers from '../Transfers';
+import OutgoingTransfers from '../OutgoingTransfers';
+import IncomingTransfers from '../IncomingTransfers';
 import AuthContext from "../../context/Auth/auth";
 
 function Copyright() {
@@ -112,7 +104,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 340,
+    height: 350,
   },
 }));
 
@@ -121,7 +113,8 @@ export default function Home() {
   const context = useContext(AuthContext);
   const [open, setOpen] = useState(true);
   const [account, setAccount] = useState(null)
-  const [transfers, setTransfers] = useState(null)
+  const [outgoing, setOutgoing] = useState(null)
+  const [incoming, setIncoming] = useState(null)
   const [fundView, setFundView] = useState(false)
 
   useEffect(() => {
@@ -132,28 +125,18 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      let accountId = JSON.parse(localStorage.getItem('account')).id
+    if(account){
+      console.log('account', account.balance)
+      let accountId = account.id
       fetch(`http://localhost:3000/accounts/${accountId}`)
         .then(r => r.json())
         .then(res => {
-          setTransfers(res.outgoing_transfers)
+          setIncoming(res.incoming_transfers);
+          setOutgoing(res.outgoing_transfers);
         })
-    }, 200)
-  }, []);
-
-  useEffect(() => {
-    if(account){
-      console.log('account', account.balance)
     }
   }, [account])
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const logout = () => {
@@ -163,64 +146,36 @@ export default function Home() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" >
         <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              {account ? account.first_name : null}
-
-              <button onClick={() => {console.log(transfers)}}>Test</button>
-
+              {account ? <>Welcome, {account.first_name}!</> : null}
           </Typography>
           <button onClick={logout}>Log out</button>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
-      </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
             <Grid item xs={12}>
+              <Paper className={fixedHeightPaper}>
               {
                 fundView ?
-                  <Paper className={fixedHeightPaper}>
-                    <Fund account={account} setAccount={setAccount} setFundView={setFundView} />
-                  </Paper>
+                  <Fund account={account} setAccount={setAccount} setFundView={setFundView} />
                   :
-                  <Paper className={fixedHeightPaper}>
-                    <Balance account={account} setFundView={setFundView}/>
-                  </Paper>
+                  <Balance account={account} setFundView={setFundView}/>
               }
+              </Paper>
             </Grid>
-            {/* Recent Transfers */}
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <Paper className={classes.paper}>
-                <Transfers outgoing_transfers={transfers} />
+                <OutgoingTransfers transfers={outgoing} />
+              </Paper>
+            </Grid>
+            <Grid item xs={6}>
+              <Paper className={classes.paper}>
+                <IncomingTransfers transfers={incoming} />
               </Paper>
             </Grid>
           </Grid>
